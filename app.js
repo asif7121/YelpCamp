@@ -17,12 +17,13 @@ import LocalStrategy from 'passport-local';
 import User from './models/user.js'
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
-import MongoStore from 'connect-mongo';
 
 import userRoutes from './routes/users.js'
 import campgroundRoutes from './routes/campgrounds.js'
 import reviewRoutes from './routes/reviews.js'
 import { db } from './db.js';
+import {store} from "./db.js"
+import {seedDB} from './seeds/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,7 +31,9 @@ const Port = +process.env.PORT
 
 
 db()
-
+seedDB().then(() => {
+  mongoose.connection.close();
+});
 
 const app = express();
 
@@ -46,7 +49,6 @@ app.use(ExpressMongoSanitize());
 app.use(helmet({contentSecurityPolicy:false}));
 
 
-import {store} from "./db.js"
 
 
 const sessionConfig = {
